@@ -8,6 +8,11 @@ interface IProps {
   second: string;
 }
 
+const FIXES: Record<string, number> = {
+  BTC: 8,
+  USD: 2
+}
+
 const CurrencyConverter = ({first, second}: IProps) => {
   const [value, setValue] = useState<string>('');
   const [selectedCurrency, setSelectedCurrency] = useState<string>(first);
@@ -18,9 +23,9 @@ const CurrencyConverter = ({first, second}: IProps) => {
 
   const handleSwitch = useCallback((currency: string) => {
     const newValue = momizedValue.exchangeTo(currency);
-    setValue(newValue.amount.toString());
+    setValue(parseFloat(newValue.amount.toFixed(FIXES[currency])).toString());
     setSelectedCurrency(currency)
-  }, [momizedValue]);
+  }, [momizedValue, selectedCurrency]);
 
   const renderButton = useCallback((currency: string): JSX.Element => {
     return (
@@ -39,7 +44,7 @@ const CurrencyConverter = ({first, second}: IProps) => {
 
   return (
     <div>
-      <input value={value} onChange={(e) => setValue(e.target.value)} className="w-full border-0 py-2 px-4 outline-0 text-center font-bold text-black placeholder-gray-600 text-2xl" placeholder="0.0" />
+      <input value={value} onChange={(e) => setValue(e.target.value)} className="w-full border-0 py-2 px-4 outline-0 text-center font-bold text-black placeholder-gray-300 text-2xl" placeholder="0" />
       <div className="flex w-full gap-5 mt-2">
         {renderButton(first)}
         {renderButton(second)}
